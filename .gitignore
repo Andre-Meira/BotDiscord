@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 BotDiscord/.vscode/launch.json
 BotDiscord/.vscode/tasks.json
+BotDiscord/appsettings.json
