@@ -14,12 +14,19 @@
     <PackageReference Include="Discord.Net.Core" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </None>    
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationDependecy\ApplicationDependecy.csproj" />
+    <ProjectReference Include="..\TwitchService\TwitchService.csproj" />
   </ItemGroup>
 
 </Project>

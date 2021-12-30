@@ -1,4 +1,5 @@
-﻿using BotDiscord.Services.Hosted;
+﻿using ApplicationDependecy;
+using BotDiscord.Services.Hosted;
 using Discord.Addons.Hosting;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,7 @@ class Program
                 })
                 .ConfigureServices((context, services) =>
                 {                                           
+                    services.AddDependecy(config1);
                     services.AddHostedService<CommandHandler>();                   
                 }).UseConsoleLifetime();
 
