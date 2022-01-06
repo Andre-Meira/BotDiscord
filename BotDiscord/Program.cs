@@ -1,4 +1,5 @@
 ﻿using ApplicationDependecy;
+using BotDiscord.Services;
 using BotDiscord.Services.Hosted;
 using Discord.Addons.Hosting;
 using Discord.WebSocket;
@@ -50,7 +51,9 @@ class Program
                 .ConfigureServices((context, services) =>
                 {                                           
                     services.AddDependecy(config1);
-                    services.AddHostedService<CommandHandler>();                   
+                    services.AddHostedService<CheckTokenAcess>();  
+                    services.AddHostedService<CommandHandler>();    
+                                 
                 }).UseConsoleLifetime();
 
             var host = builder.Build();
