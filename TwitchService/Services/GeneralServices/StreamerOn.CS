@@ -1,5 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using TwitchService.Data.ObjectResponse;
 
 namespace TwitchService.Services.GeneralServices;
 
@@ -14,7 +16,7 @@ public class StreamerOn
         _config = config;
     }
 
-    public async Task<string> GetStreamAsync(string user, string Token)
+    public async Task<ObjectStreamerOn> GetStreamAsync(string user, string Token)
     {
         var uri = _httpClient.BaseAddress;
         HttpRequestMessage requestStream = new HttpRequestMessage(HttpMethod.Get, _httpClient.BaseAddress + user);
@@ -24,7 +26,7 @@ public class StreamerOn
         string BodyResponse = await ResponseStream.Content.ReadAsStringAsync();
 
         if (ResponseStream.StatusCode == HttpStatusCode.OK)
-            return BodyResponse;
+            return JsonConvert.DeserializeObject<ObjectStreamerOn>(BodyResponse);            
 
         throw new Exception($"Error: Status Code:{ResponseStream.StatusCode}, Mensagem: {BodyResponse}");
     }
