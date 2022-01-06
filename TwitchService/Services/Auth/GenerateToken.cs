@@ -16,11 +16,11 @@ public class TokenObjectResponse
 
 public class GenerateToken
 {
-    private readonly IConfiguration _configuration;
+    private readonly IConfiguration _config;
     private readonly HttpClient _httpClient;
     public GenerateToken(IConfiguration configuration, IHttpClientFactory httpClient)
     {
-        _configuration = configuration;
+        _config = configuration;
         _httpClient = httpClient.CreateClient("ApiTwitch");
     }
 
@@ -40,11 +40,9 @@ public class GenerateToken
 
     private Dictionary<string, string> BodyRequestToken()
     {
-        Dictionary<string, string> body = new Dictionary<string, string>();
-        body.Add("client_id", _configuration["IdClientTwitch"]);
-        body.Add("client_secret", _configuration["SecreatIDTwitch"]);
+        Dictionary<string, string> body = new Dictionary<string, string>();        
         body.Add("grant_type", "client_credentials");
-
+        body.Add("client_secret", _config["SecreatIDTwitch"]);
         return body;
     }
 }
