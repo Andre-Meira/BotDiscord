@@ -4,7 +4,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace BotDiscord.Services.Hosted;
+namespace BotDiscord.Services.HandlerHosted;
 
 public class CommandHandler : DiscordClientService
 {

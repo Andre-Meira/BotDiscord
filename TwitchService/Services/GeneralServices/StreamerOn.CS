@@ -18,17 +18,24 @@ public class StreamerOn
 
     public async Task<ObjectStreamerOn> GetStreamAsync(string user, string Token)
     {
-        var uri = _httpClient.BaseAddress;
-        HttpRequestMessage requestStream = new HttpRequestMessage(HttpMethod.Get, _httpClient.BaseAddress + user);
-        requestStream.Headers.Add("Authorization", $"Bearer {Token}");
+        try
+        {
+            HttpRequestMessage requestStream = new HttpRequestMessage(HttpMethod.Get, _httpClient.BaseAddress + user);
+            requestStream.Headers.Add("Authorization", $"Bearer {Token}");
 
-        HttpResponseMessage ResponseStream = await _httpClient.SendAsync(requestStream);
-        string BodyResponse = await ResponseStream.Content.ReadAsStringAsync();
+            HttpResponseMessage ResponseStream = await _httpClient.SendAsync(requestStream);
+            string BodyResponse = await ResponseStream.Content.ReadAsStringAsync();
+            ObjectStreamerOn objectStreamer = JsonConvert.DeserializeObject<ObjectStreamerOn>(BodyResponse);
 
-        if (ResponseStream.StatusCode == HttpStatusCode.OK)
-            return JsonConvert.DeserializeObject<ObjectStreamerOn>(BodyResponse);            
+            if(objectStreamer.data.Length == 0)                       
+                throw new Exception("Streamer não está online");
 
-        throw new Exception($"Error: Status Code:{ResponseStream.StatusCode}, Mensagem: {BodyResponse}");
+            return objectStreamer;
+        }
+        catch (Exception err)
+        {
+            throw;
+        }
     }
 
 }

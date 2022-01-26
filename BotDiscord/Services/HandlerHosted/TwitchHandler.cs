@@ -1,23 +1,25 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TwitchService.Services.Auth;
 
-namespace BotDiscord.Services.Hosted;
+namespace BotDiscord.Services.HandlerHosted;
 
-public abstract class RefreshTokenHandler : IHostedService, IDisposable
-{
-    private readonly ILogger<RefreshTokenHandler> _logger;
+public abstract class TwitchHandler : IHostedService, IDisposable
+{    
+    public static TokenObjectResponse Token { get; set; }    
+    private readonly ILogger<TwitchHandler> _logger;
     private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
-    private Task _executingTask; 
-    public RefreshTokenHandler(ILogger<RefreshTokenHandler> logger)
+    private Task _executingTask;
+    public TwitchHandler(ILogger<TwitchHandler> logger) 
     {
-        _logger = logger;     
+        _logger = logger;
     }
 
     protected abstract Task ExecuteAsync(CancellationToken cancellationToken);
 
     public virtual Task StartAsync(CancellationToken cancellationToken)
     {
-        
+        _logger.LogInformation("---Start Service");   
         _executingTask = ExecuteAsync(_stoppingCts.Token);
 
         if (_executingTask.IsCompleted)
@@ -35,9 +37,9 @@ public abstract class RefreshTokenHandler : IHostedService, IDisposable
         try
         {            
             _stoppingCts.Cancel();
-
         }finally
         {            
+            _logger.LogInformation("--StopService");
             await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite,cancellationToken));
         }
     }

@@ -16,13 +16,13 @@ public static class AppDependencies
         services.AddHttpClient("ApiTwitch", config =>
          {
             config.BaseAddress = new Uri(configuration["UriTwitch"]);
-            config.DefaultRequestHeaders.Add("Client-Id", configuration["IdClientTwitch"]);            
-         });
+            config.DefaultRequestHeaders.Add("Client-Id", configuration["IdClientTwitch"]);                        
+         });         
         services.AddHttpClient<StreamerOn>(config =>
         {
             config.BaseAddress = new Uri(configuration["UriTwitchStream"]);
-            config.DefaultRequestHeaders.Add("Client-Id", configuration["IdClientTwitch"]);
-        });        
+            config.DefaultRequestHeaders.Add("Client-Id", configuration["IdClientTwitch"]);            
+        });      
             
         return services;
     }

@@ -10,8 +10,8 @@ public class RefreshToken
     private readonly HttpClient _Http;
     private readonly IConfiguration _config;
     public RefreshToken(IHttpClientFactory http, IConfiguration config)
-    {
-        _Http = http.CreateClient("ApiTwitch");
+    {        
+        _Http = http.CreateClient("ApiTwitch");        
         _config = config;
     }   
 

@@ -1,6 +1,6 @@
 ﻿using ApplicationDependecy;
 using BotDiscord.Services;
-using BotDiscord.Services.Hosted;
+using BotDiscord.Services.HandlerHosted;
 using Discord.Addons.Hosting;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +14,7 @@ class Program
     static async Task Main(string[] args)
         {
             var config1 = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .SetBasePath(Directory.GetCurrentDirectory())                    
                     .AddJsonFile("appsettings.json", optional: true)
                     .Build();
 
@@ -25,12 +25,12 @@ class Program
                         .SetBasePath(Directory.GetCurrentDirectory())
                         .AddJsonFile("appsettings.json", false, true)
                         .Build();
-                    appConfig.AddConfiguration(configuration);
+                    appConfig.AddConfiguration(configuration);                    
                 })
                 .ConfigureLogging(ConfigLoggin =>
                 {
                     ConfigLoggin.AddConsole();
-                    ConfigLoggin.SetMinimumLevel(LogLevel.Debug);
+                    // ConfigLoggin.SetMinimumLevel(LogLevel.Debug);                    
                 })
                 .ConfigureDiscordHost((context, config) =>
                 {
@@ -50,10 +50,9 @@ class Program
                 })
                 .ConfigureServices((context, services) =>
                 {                                           
-                    services.AddDependecy(config1);
-                    services.AddHostedService<CheckTokenAcess>();  
-                    services.AddHostedService<CommandHandler>();    
-                                 
+                    services.AddDependecy(config1);                    
+                    services.AddHostedService<TokenAcess>();  
+                    services.AddHostedService<CommandHandler>();                                     
                 }).UseConsoleLifetime();
 
             var host = builder.Build();
