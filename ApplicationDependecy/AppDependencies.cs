@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using TwitchService.Services.Auth;
 using TwitchService.Services.GeneralServices;
+using TwitchService.Services.GeneralServices.User;
 
 namespace ApplicationDependecy;
 public static class AppDependencies
@@ -10,15 +11,15 @@ public static class AppDependencies
         this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<GenerateToken>();
-        services.AddScoped<StreamerOn>();
+        services.AddScoped<IUserRequest,UserRequest>();
         services.AddScoped<RefreshToken>();
         
-        services.AddHttpClient("ApiTwitch", config =>
+        services.AddHttpClient<GenerateToken>(config =>
          {
             config.BaseAddress = new Uri(configuration["UriTwitch"]);
             config.DefaultRequestHeaders.Add("Client-Id", configuration["IdClientTwitch"]);                        
          });         
-        services.AddHttpClient<StreamerOn>(config =>
+        services.AddHttpClient("UriTwitchApi",config =>
         {
             config.BaseAddress = new Uri(configuration["UriTwitchStream"]);
             config.DefaultRequestHeaders.Add("Client-Id", configuration["IdClientTwitch"]);            
