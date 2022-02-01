@@ -2,7 +2,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TwitchService.Services.Auth;
 
-namespace BotDiscord.Services.HandlerHosted;
+namespace BotDiscord.Services.HostHandler;
 
 public abstract class TwitchHandler : IHostedService, IDisposable
 {    

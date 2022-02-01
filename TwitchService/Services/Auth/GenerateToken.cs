@@ -15,13 +15,13 @@ public class TokenObjectResponse
 }
 
 public class GenerateToken
-{
+{    
     private readonly IConfiguration _config;
     private readonly HttpClient _httpClient;
-    public GenerateToken(IConfiguration configuration, IHttpClientFactory httpClient)
+    public GenerateToken(IConfiguration configuration, HttpClient httpClient)
     {
         _config = configuration;
-        _httpClient = httpClient.CreateClient("ApiTwitch");
+        _httpClient = httpClient;
     }
 
     public async Task<TokenObjectResponse> GetTokenAsync()
@@ -43,6 +43,7 @@ public class GenerateToken
         Dictionary<string, string> body = new Dictionary<string, string>();        
         body.Add("grant_type", "client_credentials");
         body.Add("client_secret", _config["SecreatIDTwitch"]);
+        body.Add("scope", "user:read:email");
         return body;
     }
 }

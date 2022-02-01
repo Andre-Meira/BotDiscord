@@ -1,6 +1,6 @@
 ﻿using ApplicationDependecy;
 using BotDiscord.Services;
-using BotDiscord.Services.HandlerHosted;
+using BotDiscord.Services.HostHandler;
 using Discord.Addons.Hosting;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
