@@ -1,5 +1,6 @@
 ﻿using ApplicationDependecy;
 using BotDiscord.Services;
+using BotDiscord.Services.DiscordApplication;
 using BotDiscord.Services.HostHandler;
 using Discord.Addons.Hosting;
 using Discord.WebSocket;
@@ -9,54 +10,58 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 namespace BotDiscord;
 
-class Program 
+class Program
 {
     static async Task Main(string[] args)
-        {
-            var config1 = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())                    
-                    .AddJsonFile("appsettings.json", optional: true)
-                    .Build();
+    {
+        var config1 = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true)
+                .Build();
 
-            var builder = new HostBuilder()
-                .ConfigureAppConfiguration(appConfig =>
-                {
-                    var configuration = new ConfigurationBuilder()
-                        .SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile("appsettings.json", false, true)
-                        .Build();
-                    appConfig.AddConfiguration(configuration);                    
-                })
-                .ConfigureLogging(ConfigLoggin =>
-                {
-                    ConfigLoggin.AddConsole();
+        var builder = new HostBuilder()
+            .ConfigureAppConfiguration(appConfig =>
+            {
+                var configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", false, true)
+                    .Build();
+                appConfig.AddConfiguration(configuration);
+            })
+            .ConfigureLogging(ConfigLoggin =>
+            {
+                ConfigLoggin.AddConsole();
                     // ConfigLoggin.SetMinimumLevel(LogLevel.Debug);                    
                 })
-                .ConfigureDiscordHost((context, config) =>
+            .ConfigureDiscordHost((context, config) =>
+            {
+                config.SocketConfig = new DiscordSocketConfig
                 {
-                    config.SocketConfig = new DiscordSocketConfig
-                    {
-                        LogLevel = Discord.LogSeverity.Debug,
-                        AlwaysDownloadUsers = false,
-                        MessageCacheSize = 200,
-                    };
-                    config.Token = context.Configuration["TokenBot"];
-                })
-                .UseCommandService((context, config) =>
-                {
-                    config.CaseSensitiveCommands = false;
-                    config.LogLevel = Discord.LogSeverity.Debug; 
-                    config.DefaultRunMode = Discord.Commands.RunMode.Sync;
-                })
-                .ConfigureServices((context, services) =>
-                {                                           
-                    services.AddDependecy(config1);                    
-                    services.AddHostedService<TokenAcess>();  
-                    services.AddHostedService<CommandHandler>();                                     
-                }).UseConsoleLifetime();
+                    LogLevel = Discord.LogSeverity.Debug,
+                    AlwaysDownloadUsers = false,
+                    MessageCacheSize = 200,
+                };
+                config.Token = context.Configuration["TokenBot"];
+            })
+            .UseCommandService((context, config) =>
+            {
+                config.CaseSensitiveCommands = false;
+                config.LogLevel = Discord.LogSeverity.Debug;
+                config.DefaultRunMode = Discord.Commands.RunMode.Sync;
+            })
+            .ConfigureServices((context, services) =>
+            {
+                services.AddDependecy(config1);
+                services.AddScoped<DiscordMensagem>();  
 
-            var host = builder.Build();
+                services.AddHostedService<TokenAcess>();
+                services.AddHostedService<CheckedStreamerON>();
+                services.AddHostedService<CommandHandler>();
 
-            await host.RunAsync();
+            }).UseConsoleLifetime();
+
+        var host = builder.Build();
+
+        await host.RunAsync();
     }
 }

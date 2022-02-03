@@ -28,12 +28,16 @@ namespace BotDiscord.Controller.Commands
         {
             try
             {
-                Task<ObjectStreamerOn> taskObjectStreamer =  _twitchUser.GetStreamAsync(Stramer, TokenObject.access_token);
-                Task<ObjectStreamerInfo> taskObjectInfoUser = _twitchUser.GetInfoAsync(Stramer, TokenObject.access_token); 
+                Task<ObjectStreamerOn> taskObjectStreamer =  _twitchUser.GetStreamAsync(TokenObject.access_token,Stramer);
+                Task<ObjectStreamerInfo> taskObjectInfoUser = _twitchUser.GetInfoAsync(TokenObject.access_token, Stramer); 
 
                 await Task.WhenAll(taskObjectStreamer,taskObjectInfoUser);
+                            
                 ObjectStreamerOn objectStreamer = taskObjectStreamer.Result;
                 ObjectStreamerInfo objectStreamerInfo = taskObjectInfoUser.Result;
+                                                                
+                if(objectStreamer.data.Length == 0)                       
+                    throw new ExecpetionObject("Streamer não está online");
 
                 var dataInicio = objectStreamer.data[0].started_at.ToLocalTime();
                                 

@@ -20,12 +20,11 @@ public abstract class TwitchHandler : IHostedService, IDisposable
     public virtual Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("---Start Service");   
-        _executingTask = ExecuteAsync(_stoppingCts.Token);
-
-        if (_executingTask.IsCompleted)
-        {
-            return _executingTask;
-        }         
+        Task.Run(async () =>
+         {
+             await ExecuteAsync(cancellationToken);
+         },cancellationToken);
+        
         return Task.CompletedTask;        
     }
 
