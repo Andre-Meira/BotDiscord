@@ -8,10 +8,9 @@ namespace BotDiscord.Services.HostHandler;
 
 public class CommandHandler : DiscordClientService
 {
-    private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
         private readonly CommandService _service;
         private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
-
 
         public CommandHandler(DiscordSocketClient client, ILogger<CommandHandler> logger,
             IServiceProvider provider, CommandService commandService, IConfiguration config) : base(client, logger)
@@ -24,7 +23,7 @@ public class CommandHandler : DiscordClientService
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Client.MessageReceived += OnMenssageReceived;
-            await _service.AddModulesAsync(System.Reflection.Assembly.GetEntryAssembly(), _serviceProvider);
+            await _service.AddModulesAsync(System.Reflection.Assembly.GetEntryAssembly(), _serviceProvider);            
         }
 
         private async Task OnMenssageReceived(SocketMessage socketMessage)

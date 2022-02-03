@@ -13,7 +13,7 @@ public class UserRequest : IUserRequest
         _config = config;
     }
 
-    public async Task<ObjectStreamerOn> GetStreamAsync(string user, string token)
+    public async Task<ObjectStreamerOn> GetStreamAsync(string token, string user)
     {
         try
         {
@@ -22,20 +22,17 @@ public class UserRequest : IUserRequest
 
             HttpResponseMessage ResponseStream = await _http.SendAsync(requestStream);
             string BodyResponse = await ResponseStream.Content.ReadAsStringAsync();
-            ObjectStreamerOn objectStreamer = JsonConvert.DeserializeObject<ObjectStreamerOn>(BodyResponse);
-
-            if(objectStreamer.data.Length == 0)                       
-                throw new ExecpetionObject("Streamer não está online",BodyResponse, (int)ResponseStream.StatusCode);
-
+            ObjectStreamerOn objectStreamer = JsonConvert.DeserializeObject<ObjectStreamerOn>(BodyResponse);            
+            
             return objectStreamer;
         }
         catch (Exception err)
-        {
+        {                  
             throw new ExecpetionObject(err.Message);
         }
     }
 
-    public async Task<ObjectStreamerInfo> GetInfoAsync(string user,string token)
+    public async Task<ObjectStreamerInfo> GetInfoAsync(string token, string user)
     {
         try
         {
