@@ -1,31 +1,30 @@
 using Microsoft.Extensions.Logging;
 using TwitchService.Services.Auth;
 using BotDiscord.Services.HostHandler;
+using TwitchService.Data;
 
 namespace BotDiscord.Services;
 
 public class TokenAcess : TwitchHandler
 {
-    private readonly RefreshToken _RefreshToken;
-    private readonly GenerateToken _generateToken;
     private readonly ILogger<TokenAcess> _logger;
+    private readonly TokenTwitch _tokenTwitch;
 
-    public TokenAcess(ILogger<TokenAcess> logger
-    , RefreshToken refreshToken, GenerateToken generateToken) : base(logger)
+    public TokenAcess(TokenTwitch tokenTwitch, ILogger<TokenAcess> logger) : base(logger)
     {
         _logger = logger;
-        _RefreshToken = refreshToken;
-        _generateToken = generateToken;
+        _tokenTwitch = tokenTwitch;
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        
         do
         {
             try
-            {
-                Token = await _generateToken.GetTokenAsync();
-                _logger.LogWarning($"Token Criado!! Token: {Token.access_token}");
+            {               
+                Token = await _tokenTwitch.GetTokenAsync();
+                _logger.LogWarning($@"Token Criado!! Token: {Token.access_token}, Expira em {Token.expires_in}");
                 await Task.Delay(Token.expires_in, cancellationToken);
                 Token = new TokenObjectResponse();
             }

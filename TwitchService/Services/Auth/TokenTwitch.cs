@@ -1,27 +1,17 @@
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using TwitchService.Data;
 
 namespace TwitchService.Services.Auth;
-
-
-public class TokenObjectResponse
+public class TokenTwitch
 {
-    public string access_token { get; set; }
-    public string refresh_token { get; set; }
-    public int expires_in { get; set; }
-    public string[] scope { get; set; }
-    public string token_type { get; set; }
-}
-
-public class GenerateToken
-{    
     private readonly IConfiguration _config;
     private readonly HttpClient _httpClient;
-    public GenerateToken(IConfiguration configuration, HttpClient httpClient)
+    public TokenTwitch(IConfiguration configuration, IHttpClientFactory httpClient)
     {
         _config = configuration;
-        _httpClient = httpClient;
+        _httpClient = httpClient.CreateClient("UriTokenTwitch");
     }
 
     public async Task<TokenObjectResponse> GetTokenAsync()
@@ -42,7 +32,7 @@ public class GenerateToken
     {
         Dictionary<string, string> body = new Dictionary<string, string>();        
         body.Add("grant_type", "client_credentials");
-        body.Add("client_secret", _config["SecreatIDTwitch"]);
+        body.Add("client_secret", _config["SecreatIDTwitch"]);        
         body.Add("scope", "user:read:email");
         return body;
     }
