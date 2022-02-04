@@ -7,17 +7,18 @@ using TwitchService.Services.Auth;
 using TwitchService.Services.GeneralServices;
 using BotDiscord.Services.HostHandler;
 using TwitchService.Services.GeneralServices.User;
+using TwitchService.Data;
 
 namespace BotDiscord.Controller.Commands
 {
     public class GeralCommands : ModuleBase<SocketCommandContext>
     {
-        private readonly GenerateToken _generateToken;
+        private readonly TokenTwitch _generateToken;
         private readonly IUserRequest _twitchUser;
 
         private TokenObjectResponse TokenObject = TokenAcess.Token;
 
-        public GeralCommands(GenerateToken generateToken, IUserRequest twitchUser)
+        public GeralCommands(TokenTwitch generateToken, IUserRequest twitchUser)
         {
             _generateToken = generateToken;
             _twitchUser = twitchUser;
