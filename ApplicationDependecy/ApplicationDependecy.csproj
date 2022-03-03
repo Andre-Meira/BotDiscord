@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TwitchService\TwitchService.csproj" />
+    <ProjectReference Include="..\DataBaseApplication\DataBaseApplication.csproj" />
   </ItemGroup>
 
 </Project>
