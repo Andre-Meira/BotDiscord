@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DataBaseApplication.Models;
+using DataBaseApplication.Repositories.DiscordServers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TwitchService.Services.Auth;
 using TwitchService.Services.GeneralServices.User;
@@ -12,6 +15,9 @@ public static class AppDependencies
     {
         services.AddScoped<TokenTwitch>();
         services.AddScoped<IUserRequest,UserRequest>();
+        services.AddScoped<IDiscordServerRepos,DiscordServerRepos>();
+
+        services.AddDbContext<DiscordBotAplicationContext>(options => options.UseNpgsql(configuration["StringConnection"]),ServiceLifetime.Transient);   
 
         services.AddHttpClient("UriTokenTwitch", config =>
          {
