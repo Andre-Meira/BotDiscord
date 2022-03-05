@@ -28,8 +28,7 @@ public class DiscordService : IDiscordService
         embed.WithDescription($"Titulo: {objectStreamer.data[0].title}");
         embed.WithUrl($"https://www.twitch.tv/{objectStreamer.data[0].user_login}");
 
-        SocketChannel channel = _client.GetChannel(912066074017685505);
-        await (channel as IMessageChannel).SendMessageAsync(embed: embed.Build());
-
+        IMessageChannel channel = await _client.GetChannelAsync(924078434416738364) as IMessageChannel;        
+        await channel.SendMessageAsync(embed: embed.Build());
     }
 }

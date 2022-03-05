@@ -35,6 +35,7 @@ public class CheckedStreamerON : TwitchHandler
 
                     await Task.Delay(TimeSpan.FromHours(1.5));                        
                 }
+                await Task.Delay(TimeSpan.FromSeconds(2));
             }
             catch (Exception err)
             {

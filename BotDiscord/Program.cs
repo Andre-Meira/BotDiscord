@@ -55,9 +55,9 @@ class Program
                 services.AddDependecy(config1);
                 services.AddScoped<IDiscordService,DiscordService>();      
 
-                services.AddHostedService<TokenAcess>();
-                services.AddHostedService<CheckedStreamerON>();
+                services.AddHostedService<TokenAcess>();                
                 services.AddHostedService<CommandHandler>();
+                services.AddHostedService<CheckedStreamerON>();
 
             }).UseConsoleLifetime();
 
