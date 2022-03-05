@@ -1,5 +1,6 @@
 ﻿using ApplicationDependecy;
 using BotDiscord.Services;
+using BotDiscord.Services.Applications;
 using BotDiscord.Services.DiscordApplication;
 using BotDiscord.Services.HostHandler;
 using Discord.Addons.Hosting;
@@ -52,7 +53,7 @@ class Program
             .ConfigureServices((context, services) =>
             {
                 services.AddDependecy(config1);
-                services.AddScoped<DiscordMensagem>();  
+                services.AddScoped<IDiscordService,DiscordService>();      
 
                 services.AddHostedService<TokenAcess>();
                 services.AddHostedService<CheckedStreamerON>();
