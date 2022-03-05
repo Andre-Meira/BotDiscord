@@ -40,7 +40,7 @@ public class UserRequest : IUserRequest
             requestStream.Headers.Add("Authorization", $"Bearer {token}");
 
             HttpResponseMessage ResponseStream = await _http.SendAsync(requestStream);
-            string BodyResponse = await ResponseStream.Content.ReadAsStringAsync();
+            string BodyResponse = await ResponseStream.Content.ReadAsStringAsync(); 
             
             if(ResponseStream.IsSuccessStatusCode)  
                 return JsonConvert.DeserializeObject<ObjectStreamerInfo>(BodyResponse);

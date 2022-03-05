@@ -5,21 +5,20 @@ using TwitchService.Data.ObjectResponse;
 
 namespace BotDiscord.Services.DiscordApplication;
 
-public class DiscordMensagem
+public class DiscordService : IDiscordService
 {
     private readonly DiscordSocketClient _client;
     private readonly IConfiguration _config;
 
-    public DiscordMensagem(DiscordSocketClient client, IConfiguration config)
+    public DiscordService(DiscordSocketClient client, IConfiguration config)
     {
         _config = config;
         _client = client;
     }
 
-    public async Task SendAsync(ObjectStreamerInfo objectStreamerInfo, ObjectStreamerOn objectStreamer)
+    public async Task SendMsgStreamOn(ObjectStreamerInfo objectStreamerInfo, ObjectStreamerOn objectStreamer)
     {
-
-        var dataInicio = objectStreamer.data[0].started_at.ToLocalTime();
+       var dataInicio = objectStreamer.data[0].started_at.ToLocalTime();
 
         var embed = new EmbedBuilder();
         embed.WithThumbnailUrl(objectStreamerInfo.data[0].profile_image_url);
@@ -31,5 +30,6 @@ public class DiscordMensagem
 
         SocketChannel channel = _client.GetChannel(912066074017685505);
         await (channel as IMessageChannel).SendMessageAsync(embed: embed.Build());
+
     }
 }

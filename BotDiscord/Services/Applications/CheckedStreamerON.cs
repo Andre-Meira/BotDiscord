@@ -1,21 +1,19 @@
-using BotDiscord.Services.DiscordApplication;
 using BotDiscord.Services.HostHandler;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TwitchService.Data.ObjectResponse;
 using TwitchService.Services.GeneralServices.User;
 
-namespace BotDiscord.Services;
+namespace BotDiscord.Services.Applications;
 
 public class CheckedStreamerON : TwitchHandler
 {
     private readonly ILogger<CheckedStreamerON> _logger;
     private readonly IUserRequest _userTwitch;
-    private readonly IConfiguration _config;    
-    
-    private readonly DiscordMensagem _discord; 
+    private readonly IConfiguration _config;        
+    private readonly IDiscordService _discord; 
 
-    public CheckedStreamerON(DiscordMensagem discord,IUserRequest userTwitch, IConfiguration config,
+    public CheckedStreamerON(IDiscordService discord,IUserRequest userTwitch, IConfiguration config,
         ILogger<CheckedStreamerON> logger) : base(logger)
     {
         _logger = logger;
@@ -26,16 +24,14 @@ public class CheckedStreamerON : TwitchHandler
     
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        do
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
                 if (Token != null)
                 {
-                    await Task.Run(async () =>
-                        {
-                            await StreamerOn();
-                        }, cancellationToken);
+                    await Task.Run(async () => {await StreamerOn();}
+                        , cancellationToken);
 
                     await Task.Delay(TimeSpan.FromHours(1.5));                        
                 }
@@ -44,9 +40,7 @@ public class CheckedStreamerON : TwitchHandler
             {
                 _logger.LogError($"Error: {err.Message}... {err.Data}");
             }
-
-        }
-        while (!cancellationToken.IsCancellationRequested);
+        }        
     }
 
     private async Task StreamerOn()
@@ -57,18 +51,19 @@ public class CheckedStreamerON : TwitchHandler
         {
             try
             {                
-                ObjectStreamerOn objectStreamerOn = await _userTwitch.GetStreamAsync(Token.access_token, listStreamers[count]);                                                                                                
-                ObjectStreamerInfo objectStreamerInfo =  await _userTwitch.GetInfoAsync(Token.access_token, listStreamers[count]); 
+                Task<ObjectStreamerOn> objectStreamerOn = _userTwitch.GetStreamAsync(Token.access_token, listStreamers[count]);                                                                                                
+                Task<ObjectStreamerInfo> objectStreamerInfo =  _userTwitch.GetInfoAsync(Token.access_token, listStreamers[count]); 
 
-                if(objectStreamerOn.data.Length != 0)
+                await Task.WhenAll(objectStreamerOn, objectStreamerInfo);            
+
+                if(objectStreamerOn.Result.data.Length != 0)
                 {
-                    await _discord.SendAsync(objectStreamerInfo,objectStreamerOn);
-                }
-                    
+                    await _discord.SendMsgStreamOn(objectStreamerInfo.Result,objectStreamerOn.Result);
+                }                    
             }
-            catch (System.Exception err)
+            catch (Exception err)
             {
-                System.Console.WriteLine(err);
+                _logger.LogError($"Error:{err.Message}");
                 return;
             }
         }

@@ -3,7 +3,7 @@ using TwitchService.Services.Auth;
 using BotDiscord.Services.HostHandler;
 using TwitchService.Data;
 
-namespace BotDiscord.Services;
+namespace BotDiscord.Services.Applications;
 
 public class TokenAcess : TwitchHandler
 {
