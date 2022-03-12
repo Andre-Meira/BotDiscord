@@ -4,11 +4,11 @@ public class ExecpetionObject : Exception
     public object DataResponse { get; set; }
     public int StatusCode { get; set; }
 
-    public ExecpetionObject(string mensagem, object data = null, int statusCode = 0) 
+    public ExecpetionObject(string mensagem, object dataResponse = null, int statusCode = 0) 
         : base(mensagem)
     {
         Mensagem = mensagem;
-        DataResponse = data;
+        DataResponse = dataResponse;
         StatusCode = statusCode;
     }
 }
