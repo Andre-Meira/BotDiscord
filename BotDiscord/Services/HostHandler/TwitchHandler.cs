@@ -15,15 +15,14 @@ public abstract class TwitchHandler : IHostedService, IDisposable
     {
         _logger = logger;
     }
-
     protected abstract Task ExecuteAsync(CancellationToken cancellationToken);
 
     public virtual Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("---Start Service");   
-        Task.Run(async () =>
+        Task.Run(() =>
          {
-             await ExecuteAsync(cancellationToken);
+            _executingTask = ExecuteAsync(cancellationToken);
          },cancellationToken);
         
         return Task.CompletedTask;        

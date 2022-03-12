@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ApplicationDependecy\ApplicationDependecy.csproj" />
     <ProjectReference Include="..\TwitchService\TwitchService.csproj" />
+    <ProjectReference Include="..\DataBaseApplication\DataBaseApplication.csproj" />
   </ItemGroup>
 
 </Project>

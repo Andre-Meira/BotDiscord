@@ -9,7 +9,7 @@ public class DiscordServerRepos : IDiscordServerRepos
     private readonly DiscordBotAplicationContext _context; 
     public DiscordServerRepos(DiscordBotAplicationContext context)
     {
-        _context = context;
+        _context = context;    
     }
 
     public async Task AddChannelAsync(Discordserver Serv)
