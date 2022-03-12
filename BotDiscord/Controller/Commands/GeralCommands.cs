@@ -1,4 +1,3 @@
-using BotDiscord.Services;
 using Discord;
 using Discord.Commands;
 using TwitchService.Data.ObjectResponse;
@@ -6,28 +5,60 @@ using TwitchService.Services.Auth;
 using TwitchService.Services.GeneralServices.User;
 using TwitchService.Data;
 using BotDiscord.Services.Applications;
+using DataBaseApplication.Models;
+using DataBaseApplication.Repositories.StreamerXServer;
+using DataBaseApplication.Repositories.Streamer;
 
 namespace BotDiscord.Controller.Commands
 {
     public class GeralCommands : ModuleBase<SocketCommandContext>
-    {
-        private readonly TokenTwitch _generateToken;
+    {        
         private readonly IUserRequest _twitchUser;
+        private readonly IStreamerServer _serverStream;
+        private readonly IStreamerRepositore _StreamerRespositore;         
         private TokenObjectResponse TokenObject = TokenAcess.Token;
 
-        public GeralCommands(TokenTwitch generateToken, IUserRequest twitchUser)
-        {
-            _generateToken = generateToken;
+        public GeralCommands(IUserRequest twitchUser, 
+            IStreamerServer streamerServer, IStreamerRepositore streamerRepositore)
+        {            
             _twitchUser = twitchUser;
+            _serverStream = streamerServer;
+            _StreamerRespositore = streamerRepositore;
         }
 
-        [Command("Streamer")]
-        public async Task GetToken(string Stramer)
+        [Command("CadastrarStreamer")]
+        public async Task RegisterStreamer(string streamer)
         {
             try
             {
-                Task<ObjectStreamerOn> taskObjectStreamer =  _twitchUser.GetStreamAsync(TokenObject.access_token,Stramer);
-                Task<ObjectStreamerInfo> taskObjectInfoUser = _twitchUser.GetInfoAsync(TokenObject.access_token, Stramer);
+                ObjectStreamerInfo streamerInfo = await _twitchUser.GetInfoAsync(TokenObject.access_token, streamer);
+                
+                Streamerdisc streamerDt = new Streamerdisc();
+                streamerDt.IdStreamer = int.Parse(streamerInfo.data[0].id);
+                streamerDt.Nickname = streamerInfo.data[0].login;
+
+                Discordserver discordserver = new Discordserver(
+                    (long)Context.Guild.Id,
+                    (long)Context.Channel.Id, 
+                    Context.Guild.Name, Context.Channel.Name
+                );                
+
+                await _serverStream.AddAsync(streamerDt, discordserver);
+                await ReplyAsync("Streamer Cadastrado!!");
+
+            } catch (Exception err)
+            {
+                await ReplyAsync(err.Message);
+            }            
+        }
+
+        [Command("Streamer")]
+        public async Task GetToken(string streamer)
+        {
+            try
+            {
+                Task<ObjectStreamerOn> taskObjectStreamer =  _twitchUser.GetStreamAsync(TokenObject.access_token,streamer);
+                Task<ObjectStreamerInfo> taskObjectInfoUser = _twitchUser.GetInfoAsync(TokenObject.access_token, streamer);
 
                 await Task.WhenAll(taskObjectStreamer,taskObjectInfoUser);                
                 ObjectStreamerOn objectStreamer = taskObjectStreamer.Result;
@@ -47,8 +78,8 @@ namespace BotDiscord.Controller.Commands
                 embed.WithUrl($"https://www.twitch.tv/{objectStreamer.data[0].user_login}");
 
                 await ReplyAsync(embed: embed.Build());
-            }
-            catch (Exception err)
+                                
+            }catch (Exception err)
             {
                 await ReplyAsync(err.Message);
             }

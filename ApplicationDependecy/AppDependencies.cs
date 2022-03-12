@@ -1,5 +1,7 @@
 ﻿using DataBaseApplication.Models;
 using DataBaseApplication.Repositories.DiscordServers;
+using DataBaseApplication.Repositories.Streamer;
+using DataBaseApplication.Repositories.StreamerXServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,9 +17,13 @@ public static class AppDependencies
     {
         services.AddScoped<TokenTwitch>();
         services.AddScoped<IUserRequest,UserRequest>();
+        
+        services.AddScoped<IStreamerRepositore, StreamerRepositore>();
         services.AddScoped<IDiscordServerRepos,DiscordServerRepos>();
+        services.AddScoped<IStreamerServer,StreamerServer>();
+        
 
-        services.AddDbContext<DiscordBotAplicationContext>(options => options.UseNpgsql(configuration["StringConnection"]),ServiceLifetime.Transient);   
+        services.AddDbContext<DiscordBotAplicationContext>(options => options.UseNpgsql(configuration["StringConnection"]),ServiceLifetime.Singleton);   
 
         services.AddHttpClient("UriTokenTwitch", config =>
          {
