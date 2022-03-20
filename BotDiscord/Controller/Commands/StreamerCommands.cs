@@ -1,29 +1,24 @@
 using Discord;
 using Discord.Commands;
 using TwitchService.Data.ObjectResponse;
-using TwitchService.Services.Auth;
 using TwitchService.Services.GeneralServices.User;
 using TwitchService.Data;
 using BotDiscord.Services.Applications;
 using DataBaseApplication.Models;
 using DataBaseApplication.Repositories.StreamerXServer;
-using DataBaseApplication.Repositories.Streamer;
 
 namespace BotDiscord.Controller.Commands
 {
-    public class GeralCommands : ModuleBase<SocketCommandContext>
+    public class StreamerCommands : ModuleBase<SocketCommandContext>
     {        
         private readonly IUserRequest _twitchUser;
-        private readonly IStreamerServer _serverStream;
-        private readonly IStreamerRepositore _StreamerRespositore;         
+        private readonly IStreamerServer _serverStream;        
         private TokenObjectResponse TokenObject = TokenAcess.Token;
 
-        public GeralCommands(IUserRequest twitchUser, 
-            IStreamerServer streamerServer, IStreamerRepositore streamerRepositore)
+        public StreamerCommands(IUserRequest twitchUser,IStreamerServer streamerServer)
         {            
             _twitchUser = twitchUser;
-            _serverStream = streamerServer;
-            _StreamerRespositore = streamerRepositore;
+            _serverStream = streamerServer;            
         }
 
         [Command("CadastrarStreamer")]
@@ -56,7 +51,7 @@ namespace BotDiscord.Controller.Commands
         public async Task GetToken(string streamer)
         {
             try
-            {
+            {       
                 Task<ObjectStreamerOn> taskObjectStreamer =  _twitchUser.GetStreamAsync(TokenObject.access_token,streamer);
                 Task<ObjectStreamerInfo> taskObjectInfoUser = _twitchUser.GetInfoAsync(TokenObject.access_token, streamer);
 
