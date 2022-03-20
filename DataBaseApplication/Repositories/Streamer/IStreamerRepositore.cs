@@ -4,7 +4,7 @@ namespace DataBaseApplication.Repositories.Streamer;
 
 public interface IStreamerRepositore
 {
-    IEnumerable<Streamerdisc> ListStreamerAsync();    
+    IEnumerable<Streamerdisc> ListStreamer();    
     Task<Streamerdisc> GetStreamerAsync(int idStreamer);
     Task AddStreamerAsync(Streamerdisc streamer);        
     Task RemoveStreamerAsync(Streamerdisc streamer);

@@ -26,7 +26,17 @@ public class DiscordServerRepos : IDiscordServerRepos
 
     public async Task<Discordserver> GetChannel(long IdServer)
     {
-        return await _context.Discordservers.FindAsync(IdServer);
+        Discordserver serv = await _context.Discordservers.FindAsync(IdServer);
+
+        if(serv == null)
+            throw new Exception("Error: Servidor nao encontrado, pode ser que nao esteja cadatrado");
+
+        return serv;
+    }
+
+    public IEnumerable<Discordserver> ListServers()
+    {
+        return _context.Discordservers.AsEnumerable();
     }
 
     public async Task RemoveChannel(Discordserver Serv)

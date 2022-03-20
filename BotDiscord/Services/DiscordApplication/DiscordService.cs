@@ -16,7 +16,7 @@ public class DiscordService : IDiscordService
         _client = client;
     }
 
-    public async Task SendMsgStreamOn(ObjectStreamerInfo objectStreamerInfo, ObjectStreamerOn objectStreamer)
+    public async Task SendMsgStreamOn(ObjectStreamerInfo objectStreamerInfo, ObjectStreamerOn objectStreamer, long idChannelDiscord)
     {
        var dataInicio = objectStreamer.data[0].started_at.ToLocalTime();
 
@@ -28,7 +28,7 @@ public class DiscordService : IDiscordService
         embed.WithDescription($"Titulo: {objectStreamer.data[0].title}");
         embed.WithUrl($"https://www.twitch.tv/{objectStreamer.data[0].user_login}");
 
-        IMessageChannel channel = await _client.GetChannelAsync(924078434416738364) as IMessageChannel;        
+        IMessageChannel channel = await _client.GetChannelAsync((ulong)idChannelDiscord) as IMessageChannel;        
         await channel.SendMessageAsync(embed: embed.Build());
     }
 }

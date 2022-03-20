@@ -1,4 +1,7 @@
 using BotDiscord.Services.HostHandler;
+using DataBaseApplication.Models;
+using DataBaseApplication.Repositories.DiscordServers;
+using DataBaseApplication.Repositories.StreamerXServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TwitchService.Data.ObjectResponse;
@@ -10,62 +13,61 @@ public class CheckedStreamerON : TwitchHandler
 {
     private readonly ILogger<CheckedStreamerON> _logger;
     private readonly IUserRequest _userTwitch;
-    private readonly IConfiguration _config;        
-    private readonly IDiscordService _discord; 
+    private readonly IDiscordService _discordServices; 
+    private readonly IStreamerServer _streamerServer;    
+    private readonly IDiscordServerRepos _dbDiscord;
 
-    public CheckedStreamerON(IDiscordService discord,IUserRequest userTwitch, IConfiguration config,
-        ILogger<CheckedStreamerON> logger) : base(logger)
+    public CheckedStreamerON(IDiscordService discordServices ,IUserRequest userTwitch, IStreamerServer streamerServer,
+        IDiscordServerRepos dbDiscord,ILogger<CheckedStreamerON> logger) : base(logger)
     {
         _logger = logger;
-        _userTwitch = userTwitch;
-        _config = config;        
-        _discord = discord;
+        _userTwitch = userTwitch;        
+        _discordServices = discordServices;
+        _streamerServer = streamerServer;
+        _dbDiscord = dbDiscord;
     }
     
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
-        {
+        {         
             try
             {
                 if (Token != null)
                 {
-                    await Task.Run(async () => {await StreamerOn();}
-                        , cancellationToken);
-
+                    await Task.Run(async () => { await StreamerOn();}
+                        ,cancellationToken);
+                    
                     await Task.Delay(TimeSpan.FromHours(1.5));                        
-                }
+                }                
                 await Task.Delay(TimeSpan.FromSeconds(2));
             }
             catch (Exception err)
             {
                 _logger.LogError($"Error: {err.Message}... {err.Data}");
             }
-        }        
+        }       
     }
 
     private async Task StreamerOn()
     {
-        string[] listStreamers = _config.GetSection("StreamerPermission").Get<string[]>();        
+        IEnumerable<Discordserver> listServers = _dbDiscord.ListServers();
 
-        for (int count = 0; count < listStreamers.Length; count++)
+        foreach (Discordserver server in listServers)
         {
-            try
-            {                
-                Task<ObjectStreamerOn> objectStreamerOn = _userTwitch.GetStreamAsync(Token.access_token, listStreamers[count]);                                                                                                
-                Task<ObjectStreamerInfo> objectStreamerInfo =  _userTwitch.GetInfoAsync(Token.access_token, listStreamers[count]); 
+            IEnumerable<Streamerdisc> listStreamer = _streamerServer.ListStreamerServ(server.IdServer);       
 
-                await Task.WhenAll(objectStreamerOn, objectStreamerInfo);            
-
-                if(objectStreamerOn.Result.data.Length != 0)
-                {
-                    await _discord.SendMsgStreamOn(objectStreamerInfo.Result,objectStreamerOn.Result);
-                }                    
-            }
-            catch (Exception err)
+            foreach(Streamerdisc streamer in listStreamer)
             {
-                _logger.LogError($"Error:{err.Message}");
-                return;
+                Task<ObjectStreamerOn> objectStreamerOn = _userTwitch.GetStreamAsync(Token.access_token, streamer.Nickname);                                                                                                
+                Task<ObjectStreamerInfo> objectStreamerInfo =  _userTwitch.GetInfoAsync(Token.access_token, streamer.Nickname); 
+
+                await Task.WhenAll(objectStreamerOn, objectStreamerInfo);
+
+                if (objectStreamerOn.Result.data.Length == 0)
+                    continue;
+
+                await _discordServices.SendMsgStreamOn(objectStreamerInfo.Result,objectStreamerOn.Result, server.IdChanel);
             }
         }
     }

@@ -11,7 +11,7 @@ public class StreamerRepositore : IStreamerRepositore
     {
         _context = context;        
     }    
-    public IEnumerable<Streamerdisc> ListStreamerAsync()
+    public IEnumerable<Streamerdisc> ListStreamer()
     {
         return _context.Streamerdiscs.AsEnumerable();
     }

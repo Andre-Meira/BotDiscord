@@ -23,7 +23,7 @@ public static class AppDependencies
         services.AddScoped<IStreamerServer,StreamerServer>();
         
 
-        services.AddDbContext<DiscordBotAplicationContext>(options => options.UseNpgsql(configuration["StringConnection"]),ServiceLifetime.Singleton);   
+        services.AddDbContext<DiscordBotAplicationContext>(options => options.UseNpgsql(configuration["StringConnection"]),ServiceLifetime.Transient);   
 
         services.AddHttpClient("UriTokenTwitch", config =>
          {
