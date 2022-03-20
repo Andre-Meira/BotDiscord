@@ -12,4 +12,5 @@ public interface IDiscordServerRepos
     Task RemoveChannel(Discordserver Serv);
     Task UpdateChannel(Discordserver Serv);
     Task<Discordserver> GetChannel(long IdServer);   
+    IEnumerable<Discordserver> ListServers();
 }

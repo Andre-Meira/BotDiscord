@@ -1,4 +1,5 @@
 using DataBaseApplication.Models;
+using DataBaseApplication.Repositories.DiscordServers;
 using DataBaseApplication.Repositories.Streamer;
 
 namespace DataBaseApplication.Repositories.StreamerXServer;
@@ -7,11 +8,14 @@ public class StreamerServer : IStreamerServer
 {
     private readonly DiscordBotAplicationContext _context; 
     private readonly IStreamerRepositore _streamerRepositore;
+    private readonly IDiscordServerRepos _discordServer;
 
-    public StreamerServer(DiscordBotAplicationContext context, IStreamerRepositore streamerRepositore)
+    public StreamerServer(DiscordBotAplicationContext context, IStreamerRepositore streamerRepositore,
+        IDiscordServerRepos discordServer)
     {
         _context = context;        
         _streamerRepositore = streamerRepositore;
+        _discordServer = discordServer;
     }
 
     public RelStreamerXDiscordserf GetRelStreamerXDiscord(Streamerdisc streamer, Discordserver server)
@@ -25,14 +29,18 @@ public class StreamerServer : IStreamerServer
     {       
         RelStreamerXDiscordserf relRegistration = GetRelStreamerXDiscord(streamer,server);
         Streamerdisc streamerInfo  = await _streamerRepositore.GetStreamerAsync(streamer.IdStreamer);
+        Discordserver discordInfo =  await _discordServer.GetChannel(server.IdChanel);
 
         if(relRegistration == null)
         {
             if(streamerInfo == null)
                 await _streamerRepositore.AddStreamerAsync(streamer);
 
+            if(discordInfo == null)
+                await _discordServer.AddChannelAsync(server);
+
             RelStreamerXDiscordserf StreamerXDiscord = new RelStreamerXDiscordserf(streamer.IdStreamer,server.IdServer);        
-            _context.Add(StreamerXDiscord);            
+            _context.Add(StreamerXDiscord);                 
             await _context.SaveChangesAsync();                        
 
         }else
@@ -41,12 +49,11 @@ public class StreamerServer : IStreamerServer
         }        
     }
     
-
     public async Task RemoveAsync(Streamerdisc streamer, Discordserver server)
     {
         try
         {
-            RelStreamerXDiscordserf relRegister = new RelStreamerXDiscordserf();
+            RelStreamerXDiscordserf relRegister = new RelStreamerXDiscordserf(streamer.IdStreamer, server.IdServer);
 
             _context.RelStreamerXDiscordserves.Remove(relRegister);
             await _context.SaveChangesAsync();
@@ -57,4 +64,19 @@ public class StreamerServer : IStreamerServer
         }        
     }
 
+    public IEnumerable<RelStreamerXDiscordserf> ListStreamerXDiscord()
+    {
+        return _context.RelStreamerXDiscordserves.AsEnumerable();
+    }
+
+    public IEnumerable<Streamerdisc> ListStreamerServ(long idSserver)
+    {
+        var query = from relStreamDiscord in _context.RelStreamerXDiscordserves
+            join server in _context.Discordservers on relStreamDiscord.FkIdServe equals server.IdServer 
+            join streamers in _context.Streamerdiscs on relStreamDiscord.FkStreamer equals streamers.IdStreamer
+            where relStreamDiscord.FkIdServe == idSserver
+            select new Streamerdisc(streamers.IdStreamer,streamers.Nickname);
+
+        return query.AsEnumerable();
+    }
 }
