@@ -1,5 +1,4 @@
 ﻿using ApplicationDependecy;
-using BotDiscord.Services;
 using BotDiscord.Services.Applications;
 using BotDiscord.Services.DiscordApplication;
 using BotDiscord.Services.HostHandler;

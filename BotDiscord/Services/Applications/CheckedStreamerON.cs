@@ -2,7 +2,6 @@ using BotDiscord.Services.HostHandler;
 using DataBaseApplication.Models;
 using DataBaseApplication.Repositories.DiscordServers;
 using DataBaseApplication.Repositories.StreamerXServer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TwitchService.Data.ObjectResponse;
 using TwitchService.Services.GeneralServices.User;
@@ -33,11 +32,13 @@ public class CheckedStreamerON : TwitchHandler
         {         
             try
             {
+                Task threedService = null;
+
                 if (Token != null)
                 {
-                    await Task.Run(async () => { await StreamerOn();}
-                        ,cancellationToken);
+                    threedService = Task.Run(async () => {StreamerOn();},cancellationToken);
                     
+                    await Task.WhenAll(threedService);
                     await Task.Delay(TimeSpan.FromHours(1.5));                        
                 }                
                 await Task.Delay(TimeSpan.FromSeconds(2));
@@ -45,6 +46,7 @@ public class CheckedStreamerON : TwitchHandler
             catch (Exception err)
             {
                 _logger.LogError($"Error: {err.Message}... {err.Data}");
+                await Task.Delay(TimeSpan.FromMinutes(5));
             }
         }       
     }
@@ -69,6 +71,6 @@ public class CheckedStreamerON : TwitchHandler
 
                 await _discordServices.SendMsgStreamOn(objectStreamerInfo.Result,objectStreamerOn.Result, server.IdChanel);
             }
-        }
+        }    
     }
 }
