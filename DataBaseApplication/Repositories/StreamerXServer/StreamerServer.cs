@@ -1,6 +1,7 @@
 using DataBaseApplication.Models;
 using DataBaseApplication.Repositories.DiscordServers;
 using DataBaseApplication.Repositories.Streamer;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataBaseApplication.Repositories.StreamerXServer;
 
@@ -28,8 +29,8 @@ public class StreamerServer : IStreamerServer
     public async Task AddAsync(Streamerdisc streamer, Discordserver server)
     {       
         RelStreamerXDiscordserf relRegistration = GetRelStreamerXDiscord(streamer,server);
-        Streamerdisc streamerInfo  = await _streamerRepositore.GetStreamerAsync(streamer.IdStreamer);
-        Discordserver discordInfo =  await _discordServer.GetChannel(server.IdChanel);
+        Streamerdisc streamerInfo = await _streamerRepositore.GetStreamerAsync(streamer.IdStreamer);
+        Discordserver discordInfo =  await _discordServer.GetChannel(server.IdServer);
 
         if(relRegistration == null)
         {
@@ -46,17 +47,21 @@ public class StreamerServer : IStreamerServer
         }else
         {
             throw new Exception($"O Streamer ja esta cadastrado nesse Servidor!!");
-        }        
+        }           
     }
     
     public async Task RemoveAsync(Streamerdisc streamer, Discordserver server)
     {
         try
         {
-            RelStreamerXDiscordserf relRegister = new RelStreamerXDiscordserf(streamer.IdStreamer, server.IdServer);
+            RelStreamerXDiscordserf infoRel = GetRelStreamerXDiscord(streamer,server);
 
-            _context.RelStreamerXDiscordserves.Remove(relRegister);
-            await _context.SaveChangesAsync();
+            if(infoRel != null)
+            {
+                _context.Entry(infoRel).State = EntityState.Deleted;
+                _context.RelStreamerXDiscordserves.Remove(infoRel);                        
+                await _context.SaveChangesAsync();
+            }
 
         }catch(Exception err)
         {

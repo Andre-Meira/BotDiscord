@@ -47,6 +47,44 @@ namespace BotDiscord.Controller.Commands
             }            
         }
 
+        [Command("RemoveStreamer")] 
+        public async Task RemoveStreamer(string streamer)
+        {
+            string stringStreamerLower = streamer.ToLower();            
+            ObjectStreamerInfo infoStreamer =  await _twitchUser.GetInfoAsync(TokenAcess.Token.access_token, stringStreamerLower);            
+
+            IEnumerable<Streamerdisc> listStreamer = _serverStream.ListStreamerServ((long)Context.Guild.Id);
+            IEnumerable<Streamerdisc> streamerExist = listStreamer.Where(x => x.IdStreamer == int.Parse(infoStreamer.data[0].id));
+
+            if(streamerExist.Count() == 0)
+            {
+                await ReplyAsync("Streamer nao esta cadastro nesse servidor!!");                
+            }else
+            {   
+                Streamerdisc streamerDt = new Streamerdisc();
+                streamerDt.IdStreamer = int.Parse(infoStreamer.data[0].id);
+                streamerDt.Nickname = infoStreamer.data[0].login;
+
+                Discordserver discordserver = new Discordserver(
+                    (long)Context.Guild.Id,
+                    (long)Context.Channel.Id, 
+                    Context.Guild.Name, Context.Channel.Name
+                );
+
+                await _serverStream.RemoveAsync(streamerDt, discordserver);   
+            }
+        }
+
+        [Command("ListarStreamer")]
+        public async Task ListarStreamer()
+        {
+            IEnumerable<Streamerdisc> listStreamer = _serverStream.ListStreamerServ((long)Context.Guild.Id);
+            string[] arrayStreamer = listStreamer.Select(x => x.Nickname).ToArray();            
+
+            await ReplyAsync($"Lista de Streamers: {string.Join(", ",arrayStreamer)}");
+        }
+
+
         [Command("Streamer")]
         public async Task GetToken(string streamer)
         {

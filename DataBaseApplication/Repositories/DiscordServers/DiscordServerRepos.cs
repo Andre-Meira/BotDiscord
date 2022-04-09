@@ -14,23 +14,18 @@ public class DiscordServerRepos : IDiscordServerRepos
 
     public async Task AddChannelAsync(Discordserver Serv)
     {
-        
         bool checkedChanelExist = await GetChannel(Serv.IdServer) != null;
-
+            
         if(checkedChanelExist)
             throw new Exception("error: Esse server já possui um canal de notificação..");
 
         _context.Add(Serv);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();        
     }
 
     public async Task<Discordserver> GetChannel(long IdServer)
     {
-        Discordserver serv = await _context.Discordservers.FindAsync(IdServer);
-
-        if(serv == null)
-            throw new Exception("Error: Servidor nao encontrado, pode ser que nao esteja cadatrado");
-
+        Discordserver serv = await _context.Discordservers.FindAsync(IdServer);    
         return serv;
     }
 
