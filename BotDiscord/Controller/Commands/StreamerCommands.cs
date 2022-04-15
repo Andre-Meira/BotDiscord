@@ -72,6 +72,7 @@ namespace BotDiscord.Controller.Commands
                 );
 
                 await _serverStream.RemoveAsync(streamerDt, discordserver);   
+                await ReplyAsync($"Streamer -{streamer} Removido com sucesso!");
             }
         }
 
