@@ -16,10 +16,11 @@ namespace DataBaseApplication.Models
         {
         }
 
-        public virtual DbSet<Discordserver> Discordservers { get; set; } = null!;
-        public virtual DbSet<RelStreamerXDiscordserf> RelStreamerXDiscordserves { get; set; } = null!;
-        public virtual DbSet<Streamerdisc> Streamerdiscs { get; set; } = null!;
-      
+        public virtual DbSet<Discordserver> Discordservers { get; set; }
+        public virtual DbSet<LogCommand> LogCommands { get; set; }
+        public virtual DbSet<RelStreamerXDiscordserf> RelStreamerXDiscordserves { get; set; }
+        public virtual DbSet<Streamerdisc> Streamerdiscs { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Discordserver>(entity =>
@@ -42,6 +43,32 @@ namespace DataBaseApplication.Models
                 entity.Property(e => e.NameServer)
                     .HasMaxLength(30)
                     .HasColumnName("name_server");
+            });
+
+            modelBuilder.Entity<LogCommand>(entity =>
+            {
+                entity.ToTable("log_commands");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Command)
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .HasColumnName("command");
+
+                entity.Property(e => e.Data).HasColumnName("data");
+
+                entity.Property(e => e.ErrorCommands).HasColumnName("error_commands");
+
+                entity.Property(e => e.IdChannel).HasColumnName("id_channel");
+
+                entity.Property(e => e.IdServer).HasColumnName("id_server");
+
+                entity.Property(e => e.IdUser).HasColumnName("id_user");
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(50)
+                    .HasColumnName("user_name");
             });
 
             modelBuilder.Entity<RelStreamerXDiscordserf>(entity =>
